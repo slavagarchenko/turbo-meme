@@ -32,7 +32,7 @@ def calculate_hand_value(hand):
         else:
             value += int(card)
 
-    while value > 21 and aces:
+    while value > 21 and aces > 0:
         value -= 10
         aces -= 1
 
