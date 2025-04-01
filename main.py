@@ -2,106 +2,194 @@ import random
 import ru_local as ru
 
 
-def create_deck():
+class Player:
     '''
-    Function, creating and shuffling a deck of cards
-    :return: deck (list)
+    Class, representing the player in the game.
     '''
-    suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
-    ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10',
-             'Jack', 'Queen', 'King', 'Ace']
-    deck = [(rank, suit) for suit in suits for rank in ranks]
-    random.shuffle(deck)
-    return deck
+
+    def __init__(self, name, player_class):
+        '''
+        Function, Initializing the Player object with 
+        the name, class, and initial values of health 
+        and the special ability flag.
+        :name (str): player`s name
+        :player_class (str): player`s class from the list
+        ('Warrior', 'Mage', 'Archer')
+        :return: None
+        '''
+
+        self.name = name
+        self.health = 100
+        self.player_class = player_class
+        self.special_ability_used = False
+
+    def attack(self, other):
+        '''
+        Function performs an attack on another player, 
+        reducing his health.
+        :other (Player): the aim of the attack
+        return: damage (int): the amount of damage inflicted on the target.
+        '''
+
+        damage = random.randint(10, 30)
+        other.health -= damage
+        return damage
+
+    def heal(self):
+        '''
+        Fuction restores the player's health
+        :return: heal_amount (int): the amount of health restored
+        '''
+
+        heal_amount = random.randint(15, 25)
+        self.health += heal_amount
+        if self.health > 100:
+            self.health = 100
+        return heal_amount
+
+    def use_special_ability(self, target=None):
+        '''
+        Function uses a special ability of the player. 
+        If the player is a Mage, it restores health. 
+        If the player is a Warrior or a Shooter, it damages the target.
+        :target (Player, optional) (default None): target for a special ability
+        :return: damage (int): the amount of damage
+                 heal_amount (int): the amount of health restored  
+                If the ability has already been used or 
+                the target is unavailable, it returns 0.
+        '''
+
+        if self.special_ability_used:
+            print(f'{self.name} {ru.NO_ABILITY}')
+            return 0
+
+        if target == self:
+            print(f'{self.name} {ru.ABILITY_ERROR}')
+            return 0
+
+        if self.player_class == 'Warrior':
+            damage = random.randint(30, 50)
+            target.health -= damage
+            self.special_ability_used = True
+            return damage
+
+        elif self.player_class == 'Mage':
+            heal_amount = self.heal()
+            self.special_ability_used = True
+            return heal_amount
+
+        elif self.player_class == 'Archer':
+            damage = random.randint(20, 40)
+            target.health -= damage
+            self.special_ability_used = True
+            return damage
 
 
-def calculate_hand_value(hand):
+def main():
     '''
-    Fuction, calculating the value of cards in hands
-    :hand (list): cards in player`s and dealer`s hands
-    :return: value (int)
-    '''
-    value = 0
-    aces = 0
-    for card, _ in hand:
-        if card in ['Jack', 'Queen', 'King']:
-            value += 10
-        elif card == 'Ace':
-            aces += 1
-            value += 11
-        else:
-            value += int(card)
-
-    while value > 21 and aces > 0:
-        value -= 10
-        aces -= 1
-
-    return value
-
-
-def display_hands(player_hand, dealer_hand, hide_dealer_card=True):
-    '''
-    Function, displaying the player's and dealer's cards on the screen
-    :player_hand (list): the player's cards
-    :dealer_hand (list): the dealer's cards
-    :hide_dealer_card (bool): indicates whether to hide the dealer's first card
-    (by default, True)
+    The main function of the game, 
     :return: None
     '''
-    print(f'{ru.PLAYER_CARDS} {player_hand} '
-          f'({ru.VALUE} {calculate_hand_value(player_hand)})')
-    if hide_dealer_card == True:
-        print(f'{ru.DEALER_CARDS} {dealer_hand[0]}, '
-              f'{ru.CLOSED_CARD}')
-    else:
-        print(f'{ru.DEALER_CARDS}: {dealer_hand} '
-              f'({ru.VALUE} {calculate_hand_value(dealer_hand)})')
+
+    print(f'{ru.GREETING}')
+
+    players = []
+    for i in range(1, 4):
+        name = input(f'{ru.NAME} {i}: ')
+
+        player_class = ''
+
+        while True:
+            player_class_russian = input(
+                f'{ru.PLAYER_CLASS} {name} '
+                f'({ru.WARRIOR}, {ru.MAGE}, {ru.ARCHER}): ')
+            player_class_russian = player_class_russian.lower()
+
+            if player_class_russian == ru.WARRIOR:
+                player_class = 'Warrior'
+                break
+
+            elif player_class_russian == ru.MAGE:
+                player_class = 'Mage'
+                break
+
+            elif player_class_russian == ru.ARCHER:
+                player_class = 'Archer'
+                break
+
+            else:
+                print(f'{ru.CLASS_ERROR}')
+
+        players.append(Player(name, player_class))
+
+    while len(players) > 1:
+
+        for player in players:
+
+            if player.health > 0:
+                print(f'\n{ru.PLATERS_HEALTH}: ')
+
+                for p in players:
+                    print(f'{p.name} ({p.player_class}): {p.health}')
+                print(f'\n{player.name}, {ru.MOTION}')
+
+                action = input(f'{ru.ACTION}')
+
+                if action == '1':
+                    target_index = int(input(f'{ru.TARGET}')) - 1
+                    target = players[target_index]
+
+                    while target == player or target.health <= 0:
+                        print(f'{ru.TARGET_ERROR}')
+                        target_index = int(input(f'{ru.TARGET}')) - 1
+                        target = players[target_index]
+
+                    damage = player.attack(target)
+
+                    print(
+                        f'{player.name} {ru.ATTACK} {target.name} '
+                        f'{ru.CONJUNCTION} {ru.DAMAGE} {damage} {ru.HP}')
+
+                elif action == '2':
+
+                    if player.player_class == "Mage":
+                        ability_result = player.use_special_ability()
+                        print(
+                            f'{player.name} {ru.SPECIAL_OPPORTUNITY} '
+                            f'{ru.CONJUNCTION} {ru.HEALING} '
+                            f'{ability_result} {ru.HP}')
+
+                    else:
+                        target_index = int(input(f'{ru.ABILITY_TARGET}')) - 1
+                        target = players[target_index]
+                        ability_result = player.use_special_ability(target)
+
+                        if player.player_class == "Warrior":
+                            print(
+                                f'{player.name} {ru.SPECIAL_OPPORTUNITY} '
+                                f'{ru.CONJUNCTION} {ru.DAMAGE} '
+                                f'{ability_result} {ru.HP}')
+
+                        elif player.player_class == "Archer":
+                            print(
+                                f'{player.name} {ru.SPECIAL_OPPORTUNITY} '
+                                f'{ru.CONJUNCTION} {ru.DAMAGE} '
+                                f'{ability_result} {ru.HP}')
+
+                elif action == '3':
+                    heal_amount = player.heal()
+                    print(f'{player.name} {ru.HEALING} '
+                          f'{heal_amount} {ru.HP}')
+
+                if target.health <= 0:
+                    print(f'{target.name} {ru.DEATH_MESSAGE}')
+                    players.remove(target)
+
+    winner = players[0]
+    print(
+        f'\n{ru.CONGRATULATION} {winner.name} '
+        f'{ru.WINNER_MESSAGE} {winner.health} {ru.HP}')
 
 
-def blackjack():
-    '''
-    Main function.
-    Function, starting the Blackjack game process
-    :return: None
-    '''
-    deck = create_deck()
-    player_hand = [deck.pop(), deck.pop()]
-    dealer_hand = [deck.pop(), deck.pop()]
-
-    while True:
-        display_hands(player_hand, dealer_hand)
-
-        if calculate_hand_value(player_hand) == 21:
-            print(f'{ru.BLACKJACK_MESSAGE}')
-            return
-
-        action = input(f'{ru.CHOICE}').strip().lower()
-        if action == 'hit':
-            player_hand.append(deck.pop())
-            if calculate_hand_value(player_hand) > 21:
-                display_hands(player_hand, dealer_hand, hide_dealer_card=False)
-                print(f'{ru.OVERKILL_MESSAGE}')
-                return
-        elif action == 'stand':
-            break
-        else:
-            print(f'{ru.ERROR_MESSAGE}')
-
-    while calculate_hand_value(dealer_hand) < 17:
-        dealer_hand.append(deck.pop())
-
-    display_hands(player_hand, dealer_hand, hide_dealer_card=False)
-
-    player_value = calculate_hand_value(player_hand)
-    dealer_value = calculate_hand_value(dealer_hand)
-
-    if dealer_value > 21 or player_value > dealer_value:
-        print(f'{ru.PLAYER_WIN}')
-    elif player_value < dealer_value:
-        print(f'{ru.DEALER_WIN}')
-    else:
-        print(f'{ru.DRAW}')
-
-
-if __name__ == '__main__':
-    blackjack()
+if __name__ == "__main__":
+    main()
