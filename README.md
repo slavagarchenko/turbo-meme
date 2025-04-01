@@ -6,6 +6,8 @@
 
 Игра продолжается до тех пор, пока не останется один живой игрок, который будет объявлен победителем.
 
+
+
 Our program presents a game based on the generation of random events that determine the strength of the interaction between three players (Warrior, Mage, Shooter). 
 
 The goal of the game is to become the king of the arena by knocking other players out of the race. 
