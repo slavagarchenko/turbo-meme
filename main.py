@@ -1,3 +1,7 @@
+#Case №5 : game
+#Developers : Garchenko Vyacheslav, Gaberman Artem
+
+
 import random
 import ru_local as ru
 
