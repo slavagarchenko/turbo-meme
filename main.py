@@ -156,6 +156,10 @@ def main():
                               f'{ru.CONJUNCTION} {ru.HEALING} '
                               f'{ability_result} {ru.HP}')
                     else:
+                        for idx, target in enumerate(players):
+                            if target != player and target['health'] > 0:
+                                print(f'{idx + 1}: {target["name"]} '
+                                      f'({target["player_class"]})')
                         target_index = int(input(f'{ru.ABILITY_TARGET}')) - 1
                         target = players[target_index]
                         ability_result = use_special_ability(player, target)
