@@ -24,7 +24,12 @@ def attack(player, target):
     :target (dict): the target player
     :return: damage (int): the amount of damage inflicted on the target.
     '''
-    damage = random.randint(10, 30)
+    if player['player_class'] == 'Archer':
+        damage = random.randint(10, 25)
+
+    else:
+        damage = random.randint(10, 30)
+
     target['health'] -= damage
     return damage
 
@@ -37,8 +42,10 @@ def heal(player):
     '''
     heal_amount = random.randint(15, 25)
     player['health'] += heal_amount
+
     if player['health'] > 100:
         player['health'] = 100
+
     return heal_amount
 
 
@@ -58,7 +65,7 @@ def use_special_ability(player, target=None):
         return 0
 
     if player['player_class'] == 'Warrior':
-        damage = random.randint(30, 50)
+        damage = random.randint(20, 40)
         target['health'] -= damage
         player['special_ability_used'] = True
         return damage
@@ -70,23 +77,25 @@ def use_special_ability(player, target=None):
 
     elif player['player_class'] == 'Archer':
         damage = random.randint(20, 40)
-        target['health'] -= damage
+        target['health'] -= damage*1.5
         player['special_ability_used'] = True
         return damage
 
 
 def main():
     '''
-    The main function of the game.
+    Main function.
     :return: None
     '''
     print(f'{ru.GREETING}')
 
     players = []
+
     for i in range(1, 4):
         name = input(f'{ru.NAME} {i}: ')
 
         player_class = ''
+
         while True:
             player_class_russian = input(
                 f'{ru.PLAYER_CLASS} {name} '
@@ -96,12 +105,15 @@ def main():
             if player_class_russian == ru.WARRIOR:
                 player_class = 'Warrior'
                 break
+
             elif player_class_russian == ru.MAGE:
                 player_class = 'Mage'
                 break
+
             elif player_class_russian == ru.ARCHER:
                 player_class = 'Archer'
                 break
+
             else:
                 print(f'{ru.CLASS_ERROR}')
 
@@ -109,10 +121,13 @@ def main():
 
     while len(players) > 1:
         for player in players:
+
             if player['health'] > 0:
                 print(f'\n{ru.PLATERS_HEALTH}: ')
+
                 for p in players:
                     print(f'{p['name']} ({p['player_class']}): {p['health']}')
+
                 print(f'\n{player['name']}, {ru.MOTION}')
 
                 action = input(f'{ru.ACTION}')
@@ -133,12 +148,14 @@ def main():
                         f'{ru.CONJUNCTION} {ru.DAMAGE} {damage} {ru.HP}')
 
                 elif action == '2':
+
                     if player['player_class'] == 'Mage':
                         ability_result = use_special_ability(player)
                         print(
                             f'{player['name']} {ru.SPECIAL_OPPORTUNITY} '
                             f'{ru.CONJUNCTION} {ru.HEALING} '
                             f'{ability_result} {ru.HP}')
+
                     else:
                         target_index = int(input(f'{ru.ABILITY_TARGET}')) - 1
                         target = players[target_index]
@@ -149,6 +166,7 @@ def main():
                                 f'{player['name']} {ru.SPECIAL_OPPORTUNITY} '
                                 f'{ru.CONJUNCTION} {ru.DAMAGE} '
                                 f'{ability_result} {ru.HP}')
+
                         elif player['player_class'] == 'Archer':
                             print(
                                 f'{player['name']} {ru.SPECIAL_OPPORTUNITY} '
