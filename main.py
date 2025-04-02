@@ -60,7 +60,7 @@ def use_special_ability(player, target=None):
         target['health'] -= damage
         player['special_ability_used'] = True
 
-        for p in players:
+        for p in player:
             if p != player:
                 p['abilities_blocked'] = True
         return damage
