@@ -12,8 +12,7 @@ def create_player(name, player_class):
         'name': name,
         'health': 100,
         'player_class': player_class,
-        'special_ability_used': False,
-        'abilities_blocked': False
+        'special_ability_used': False
     }
 
 def attack(player, target):
@@ -23,7 +22,6 @@ def attack(player, target):
     :target (dict): the target player
     :return: damage (int): the amount of damage inflicted on the target.
     '''
-
     if player['player_class'] == 'Warrior':
         damage = random.randint(15, 25)
 
@@ -44,25 +42,16 @@ def use_special_ability(player, target=None):
     :return: damage (int) or heal_amount (int): depending on the player's class
     '''
     if player['special_ability_used']:
-        print(f'{player['name']} {ru.NO_ABILITY}')
-        return 0
-
-    if player['abilities_blocked']:
-        print(f'{player['name']} {ru.ABILITY_BLOCKED}')
+        print(f'{player["name"]} {ru.NO_ABILITY}')
         return 0
 
     if target == player:
         print(f'{player['name']} {ru.ABILITY_ERROR}')
-        return 0
 
     if player['player_class'] == 'Warrior':
         damage = random.randint(25, 40)
         target['health'] -= damage
         player['special_ability_used'] = True
-
-        for p in player:
-            if p != player:
-                p['abilities_blocked'] = True
         return damage
 
     elif player['player_class'] == 'Mage':
@@ -105,6 +94,7 @@ def main():
 
     for i in range(1, 4):
         name = input(f'{ru.NAME} {i}: ')
+        
         player_class = ''
 
         while True:
@@ -116,25 +106,23 @@ def main():
             if player_class_russian == ru.WARRIOR:
                 player_class = 'Warrior'
                 break
+
             elif player_class_russian == ru.MAGE:
                 player_class = 'Mage'
                 break
+
             elif player_class_russian == ru.ARCHER:
                 player_class = 'Archer'
                 break
+
             else:
                 print(f'{ru.CLASS_ERROR}')
 
         players.append(create_player(name, player_class))
 
     while len(players) > 1:
-
+        
         for player in players:
-
-            for p in players:
-
-                if p['health'] > 0:
-                    p['abilities_blocked'] = False
 
             if player['health'] > 0:
                 print(f'\n{ru.PLATERS_HEALTH}: ')
@@ -146,13 +134,6 @@ def main():
                 action = input(f'{ru.ACTION}')
 
                 if action == '1':
-                    print(f'{ru.TARGET}')
-
-                    for idx, target in enumerate(players):
-
-                        if target != player and target['health'] > 0:
-                            print(f'{idx + 1}: {target['name']} '
-                                  f'({target['player_class']})')
 
                     target_index = int(input(f'{ru.TARGET}')) - 1
                     target = players[target_index]
@@ -164,50 +145,46 @@ def main():
 
                     damage = attack(player, target)
                     print(f'{player['name']} {ru.ATTACK} {target['name']} '
-                          f'{ru.CONJUNCTION} {ru.DAMAGE} '
-                          f'{damage} {ru.HP}')
+                          f'{ru.CONJUNCTION} {ru.DAMAGE} {damage} {ru.HP}')
 
                 elif action == '2':
+                    print(f'{ru.ABILITY_TARGET}')
 
                     if player['player_class'] == 'Mage':
                         ability_result = use_special_ability(player)
                         print(f'{player['name']} {ru.SPECIAL_OPPORTUNITY} '
                               f'{ru.CONJUNCTION} {ru.HEALING} '
                               f'{ability_result} {ru.HP}')
-
                     else:
-                        print(f'{ru.ABILITY_TARGET}')
-
                         for idx, target in enumerate(players):
+
                             if target != player and target['health'] > 0:
-                                print(f'{idx + 1}: {target['name']} '
-                                      f'({target['player_class']})')
+                                print(f'{idx + 1}: {target["name"]} '
+                                      f'({target["player_class"]})')
 
                         target_index = int(input(f'{ru.ABILITY_TARGET}')) - 1
                         target = players[target_index]
                         ability_result = use_special_ability(player, target)
 
                         if player['player_class'] == 'Warrior':
-                            print(f'{player['name']} {ru.SPECIAL_OPPORTUNITY}'
-                                  f' {ru.CONJUNCTION} {ru.DAMAGE} '
-                                  f'{ability_result} {ru.HP}')
+                            print(f'{player['name']} {ru.SPECIAL_OPPORTUNITY} '
+                                  f'{ru.CONJUNCTION} {ru.DAMAGE} '
+                                  f'{target['name']} {ability_result} {ru.HP}')
 
                         elif player['player_class'] == 'Archer':
-                            print(f'{player['name']} {ru.SPECIAL_OPPORTUNITY}'
-                                  f' {ru.CONJUNCTION} {ru.DAMAGE} '
-                                  f'{ability_result} {ru.HP}')
+                            print(f'{player['name']} {ru.SPECIAL_OPPORTUNITY} '
+                                  f'{ru.CONJUNCTION} {ru.DAMAGE} '
+                                  f'{target['name']} {ability_result} {ru.HP}')
 
                 elif action == '3':
                     heal_amount = heal(player)
-                    print(f'{player['name']} {ru.HEALING} '
-                          f'{heal_amount} {ru.HP}')
+                    print(f'{player['name']} {ru.HEALING} {heal_amount} {ru.HP}')
 
                 if target['health'] <= 0:
                     print(f'{target['name']} {ru.DEATH_MESSAGE}')
                     players.remove(target)
 
     winner = players[0]
-
     print(f'\n{ru.CONGRATULATION} {winner['name']} '
           f'{ru.WINNER_MESSAGE} {winner['health']} {ru.HP}')
 
