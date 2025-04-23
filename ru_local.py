@@ -2,6 +2,8 @@
 WARRIOR = 'воин'
 MAGE = 'маг'
 ARCHER = 'стрелок'
+VALKYRIE = 'валькирия'
+BERSERK = 'берсерк'
 
 # preparing for the game​
 GREETING = 'ДОБРО ПОЖАЛОВАТЬ НА АРЕНУ!'
@@ -10,7 +12,7 @@ PLAYER_CLASS = 'Выберите класс для'
 CLASS_ERROR = 'Неверный класс. Выберите класс (Воин, Маг, Стрелок):'
 
 # game process​
-PLATERS_HEALTH = 'Текущие здоровья игроков:'
+PLAYERS_HEALTH = 'Текущие здоровья игроков:'
 MOTION = 'ваш ход!'
 ACTION = 'Выберите действие (1 - Атака, 2 - Использовать специальную способность, 3 - Исцеление):'
 TARGET = 'Выберите игрока для атаки:'
@@ -25,7 +27,7 @@ ABILITY_ERROR = 'не может использовать специальную
 NO_ABILITY = 'уже использовал свою специальную способность!'
 DEATH_MESSAGE = 'был повержен!'
 
-# end of the game​
+# end of the game
 CONGRATULATION = 'Поздравляем! Игрок'
 WINNER_MESSAGE = 'стал победителем с'
 
